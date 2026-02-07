@@ -4,7 +4,7 @@ export const GAME = {
   WIDTH: 720,
   HEIGHT: 1280,
   TITLE: 'Pinball Dream',
-  BALLS_PER_GAME: 3,
+  BALLS_PER_GAME: 5,
 } as const
 
 export const PHYSICS = {
