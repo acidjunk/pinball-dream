@@ -16,13 +16,13 @@ export default class Flipper {
     this.scene = scene
     this.side = side
 
-    // Set rotation angles based on side
+    // Set rotation angles based on side (pointing inward like real pinball)
     if (side === 'left') {
-      this.restAngle = -0.3 // Pointing down-left
-      this.activeAngle = 0.6 // Rotates up
+      this.restAngle = 0.15 // Pointing slightly inward-up
+      this.activeAngle = 0.75 // Rotates up sharply
     } else {
-      this.restAngle = 0.3 // Pointing down-right
-      this.activeAngle = -0.6 // Rotates up
+      this.restAngle = -0.15 // Pointing slightly inward-up
+      this.activeAngle = -0.75 // Rotates up sharply
     }
 
     // Create flipper sprite

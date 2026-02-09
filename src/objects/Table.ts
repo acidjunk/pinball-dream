@@ -91,40 +91,68 @@ export default class Table {
     this.walls.push(topWall)
     graphics.strokeRect(0, 0, WIDTH, wallThickness)
 
-    // Pinball-style curved rollover lanes at top
-    const curveStartY = 150
-    const curveRadius = 120
+    // Pinball-style curved ramps at top (like the reference image)
+    const rampRadius = 150
+    const rampY = 200
 
-    // Left curved rollover lane
-    const leftCurve = this.scene.matter.add.circle(
-      wallThickness + 80,
-      curveStartY,
-      curveRadius,
+    // Left curved ramp - guides ball down from top-left
+    const leftRampOuter = this.scene.matter.add.circle(
+      100,
+      rampY,
+      rampRadius,
       {
         isStatic: true,
         restitution: PHYSICS.WALL.RESTITUTION,
-        friction: PHYSICS.WALL.FRICTION,
+        friction: 0.05,
       }
     )
-    this.walls.push(leftCurve)
+    this.walls.push(leftRampOuter)
 
-    // Right curved rollover lane (not in launch lane area)
-    const rightCurve = this.scene.matter.add.circle(
-      WIDTH - 240,
-      curveStartY,
-      curveRadius,
+    // Left ramp inner curve (creates channel)
+    const leftRampInner = this.scene.matter.add.circle(
+      160,
+      rampY + 20,
+      rampRadius - 60,
       {
         isStatic: true,
         restitution: PHYSICS.WALL.RESTITUTION,
-        friction: PHYSICS.WALL.FRICTION,
+        friction: 0.05,
       }
     )
-    this.walls.push(rightCurve)
+    this.walls.push(leftRampInner)
 
-    // Draw curved lanes visually
+    // Right curved ramp - guides ball down from top-right (outside launch lane)
+    const rightRampOuter = this.scene.matter.add.circle(
+      WIDTH - 280,
+      rampY,
+      rampRadius,
+      {
+        isStatic: true,
+        restitution: PHYSICS.WALL.RESTITUTION,
+        friction: 0.05,
+      }
+    )
+    this.walls.push(rightRampOuter)
+
+    // Right ramp inner curve (creates channel)
+    const rightRampInner = this.scene.matter.add.circle(
+      WIDTH - 340,
+      rampY + 20,
+      rampRadius - 60,
+      {
+        isStatic: true,
+        restitution: PHYSICS.WALL.RESTITUTION,
+        friction: 0.05,
+      }
+    )
+    this.walls.push(rightRampInner)
+
+    // Draw curved ramps visually
     graphics.lineStyle(wallThickness, COLORS.WALL, 1)
-    graphics.strokeCircle(wallThickness + 80, curveStartY, curveRadius)
-    graphics.strokeCircle(WIDTH - 240, curveStartY, curveRadius)
+    graphics.strokeCircle(100, rampY, rampRadius)
+    graphics.strokeCircle(160, rampY + 20, rampRadius - 60)
+    graphics.strokeCircle(WIDTH - 280, rampY, rampRadius)
+    graphics.strokeCircle(WIDTH - 340, rampY + 20, rampRadius - 60)
 
     // Launch lane separator (right side)
     const launchSeparator = this.scene.matter.add.rectangle(
@@ -171,53 +199,113 @@ export default class Table {
     this.walls.push(bucketWall)
     graphics.strokeRect(WIDTH - 140, HEIGHT - 210, 20, 120)
 
-    // Bottom guides (angled walls that funnel ball to flippers)
-    const bottomY = HEIGHT - 180
+    // Slingshots (triangular kickers above flippers) - HIGH restitution for kick
+    const slingshotY = HEIGHT - 200
+    const slingshotRestitution = 2.0 // Extra bouncy!
 
-    // Left angled guide
-    const leftGuide = this.scene.matter.add.rectangle(
-      120,
-      bottomY + 20,
+    // Left slingshot (triangle above left flipper)
+    const leftSlingshot = this.scene.matter.add.fromVertices(
       150,
-      20,
+      slingshotY,
+      '0 0 120 60 120 0',
+      {
+        isStatic: true,
+        restitution: slingshotRestitution,
+      }
+    )
+    this.walls.push(leftSlingshot)
+
+    // Right slingshot (triangle above right flipper)
+    const rightSlingshot = this.scene.matter.add.fromVertices(
+      WIDTH - 150,
+      slingshotY,
+      '0 0 0 60 120 60',
+      {
+        isStatic: true,
+        restitution: slingshotRestitution,
+      }
+    )
+    this.walls.push(rightSlingshot)
+
+    // Inlane guides (narrow channels between flippers)
+    const inlaneY = HEIGHT - 150
+
+    // Left inlane wall
+    const leftInlane = this.scene.matter.add.rectangle(
+      WIDTH / 2 - 30,
+      inlaneY,
+      15,
+      100,
       {
         isStatic: true,
         restitution: PHYSICS.WALL.RESTITUTION,
-        angle: -0.3,
+        angle: 0.15,
       }
     )
-    this.walls.push(leftGuide)
+    this.walls.push(leftInlane)
 
-    // Right angled guide
-    const rightGuide = this.scene.matter.add.rectangle(
-      WIDTH - 220,
-      bottomY + 20,
-      150,
-      20,
+    // Right inlane wall
+    const rightInlane = this.scene.matter.add.rectangle(
+      WIDTH / 2 + 30,
+      inlaneY,
+      15,
+      100,
       {
         isStatic: true,
         restitution: PHYSICS.WALL.RESTITUTION,
-        angle: 0.3,
+        angle: -0.15,
       }
     )
-    this.walls.push(rightGuide)
+    this.walls.push(rightInlane)
+
+    // Outlane guides (outer channels to side walls)
+    const outlaneY = HEIGHT - 180
+
+    // Left outlane guide
+    const leftOutlane = this.scene.matter.add.rectangle(
+      100,
+      outlaneY,
+      15,
+      150,
+      {
+        isStatic: true,
+        restitution: PHYSICS.WALL.RESTITUTION,
+        angle: 0.2,
+      }
+    )
+    this.walls.push(leftOutlane)
+
+    // Right outlane guide
+    const rightOutlane = this.scene.matter.add.rectangle(
+      WIDTH - 100,
+      outlaneY,
+      15,
+      150,
+      {
+        isStatic: true,
+        restitution: PHYSICS.WALL.RESTITUTION,
+        angle: -0.2,
+      }
+    )
+    this.walls.push(rightOutlane)
   }
 
   private createFlippers(): void {
     const { WIDTH, HEIGHT } = GAME
-    const flipperY = HEIGHT - 120
-    const gap = 60 // Gap between flippers
+    const flipperY = HEIGHT - 100
+    const gap = 50 // Smaller gap between flippers
 
+    // Flippers closer together and lower for better control
     this.leftFlipper = new Flipper(
       this.scene,
-      WIDTH / 2 - gap,
+      WIDTH / 2 - gap - 20,
       flipperY,
       'left'
     )
 
     this.rightFlipper = new Flipper(
       this.scene,
-      WIDTH / 2 + gap,
+      WIDTH / 2 + gap + 20,
       flipperY,
       'right'
     )

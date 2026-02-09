@@ -17,11 +17,11 @@ export const PHYSICS = {
     DENSITY: 0.001,
   },
   FLIPPER: {
-    WIDTH: 200,
-    HEIGHT: 24,
+    WIDTH: 240,
+    HEIGHT: 28,
     RESTITUTION: 1.2,
     DENSITY: 0.1,
-    ANGULAR_VELOCITY: 0.25,
+    ANGULAR_VELOCITY: 0.22,
   },
   BUMPER: {
     RADIUS: 32,
