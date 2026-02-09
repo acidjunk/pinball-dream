@@ -91,6 +91,49 @@ export default class Table {
     this.walls.push(topWall)
     graphics.strokeRect(0, 0, WIDTH, wallThickness)
 
+    // Curved corners (top left and right) for ball deflection
+    const cornerRadius = 80
+    const cornerOffset = 40
+
+    // Top-left curved corner
+    const topLeftCorner = this.scene.matter.add.circle(
+      wallThickness + cornerOffset,
+      wallThickness + cornerOffset,
+      cornerRadius,
+      {
+        isStatic: true,
+        restitution: PHYSICS.WALL.RESTITUTION,
+        friction: PHYSICS.WALL.FRICTION,
+      }
+    )
+    this.walls.push(topLeftCorner)
+
+    // Top-right curved corner
+    const topRightCorner = this.scene.matter.add.circle(
+      WIDTH - wallThickness - cornerOffset,
+      wallThickness + cornerOffset,
+      cornerRadius,
+      {
+        isStatic: true,
+        restitution: PHYSICS.WALL.RESTITUTION,
+        friction: PHYSICS.WALL.FRICTION,
+      }
+    )
+    this.walls.push(topRightCorner)
+
+    // Draw curved corners visually
+    graphics.lineStyle(wallThickness, COLORS.WALL, 1)
+    graphics.strokeCircle(
+      wallThickness + cornerOffset,
+      wallThickness + cornerOffset,
+      cornerRadius
+    )
+    graphics.strokeCircle(
+      WIDTH - wallThickness - cornerOffset,
+      wallThickness + cornerOffset,
+      cornerRadius
+    )
+
     // Launch lane separator (right side)
     const launchSeparator = this.scene.matter.add.rectangle(
       WIDTH - 120,

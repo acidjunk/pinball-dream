@@ -228,8 +228,8 @@ export default class Plunger {
   }
 
   launchBall(ball: Ball): void {
-    // Apply velocity to ball based on power
-    const launchVelocity = -this.power * 0.5
+    // Apply velocity to ball based on power (3x faster)
+    const launchVelocity = -this.power * 1.5
     ball.setVelocity(0, launchVelocity)
   }
 
