@@ -376,8 +376,9 @@ export default class Table {
 
     // Listen for plunger launch
     this.scene.events.on('plungerLaunch', (power: number) => {
-      const launchVelocity = -power * 0.5
-      this.ball.setVelocity(0, launchVelocity)
+      const launchVelocity = -power * 1.2 // Increased speed (was 0.5)
+      const horizontalVelocity = -3 // Slight leftward angle to guide ball into play
+      this.ball.setVelocity(horizontalVelocity, launchVelocity)
     })
   }
 
