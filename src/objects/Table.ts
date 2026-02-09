@@ -91,29 +91,48 @@ export default class Table {
     this.walls.push(topWall)
     graphics.strokeRect(0, 0, WIDTH, wallThickness)
 
-    // Bottom guides (angled walls near flippers)
-    const bottomY = HEIGHT - 150
-
-    // Left guide
-    const leftGuide = this.scene.matter.add.fromVertices(
-      150,
-      bottomY + 50,
-      '0 0 100 80 100 100 0 20',
+    // Launch lane separator (right side)
+    const launchSeparator = this.scene.matter.add.rectangle(
+      WIDTH - 120,
+      HEIGHT - 400,
+      20,
+      600,
       {
         isStatic: true,
         restitution: PHYSICS.WALL.RESTITUTION,
+        friction: PHYSICS.WALL.FRICTION,
+      }
+    )
+    this.walls.push(launchSeparator)
+    graphics.strokeRect(WIDTH - 130, HEIGHT - 700, 20, 600)
+
+    // Bottom guides (angled walls that funnel ball to flippers)
+    const bottomY = HEIGHT - 180
+
+    // Left angled guide
+    const leftGuide = this.scene.matter.add.rectangle(
+      120,
+      bottomY + 20,
+      150,
+      20,
+      {
+        isStatic: true,
+        restitution: PHYSICS.WALL.RESTITUTION,
+        angle: -0.3,
       }
     )
     this.walls.push(leftGuide)
 
-    // Right guide
-    const rightGuide = this.scene.matter.add.fromVertices(
-      WIDTH - 150,
-      bottomY + 50,
-      '0 80 100 0 100 20 0 100',
+    // Right angled guide
+    const rightGuide = this.scene.matter.add.rectangle(
+      WIDTH - 220,
+      bottomY + 20,
+      150,
+      20,
       {
         isStatic: true,
         restitution: PHYSICS.WALL.RESTITUTION,
+        angle: 0.3,
       }
     )
     this.walls.push(rightGuide)

@@ -18,6 +18,7 @@ export default class GameScene extends Phaser.Scene {
   private ballsRemaining: number = GAME.BALLS_PER_GAME
   private isPlaying: boolean = false
   private isPaused: boolean = false
+  private ballActive: boolean = true
 
   constructor() {
     super({ key: 'GameScene' })
@@ -102,13 +103,16 @@ export default class GameScene extends Phaser.Scene {
       this.table.rightFlipper.deactivate()
     }
 
-    // Check if ball is drained
-    if (this.table.isBallDrained()) {
+    // Check if ball is drained (only if ball is active)
+    if (this.ballActive && this.table.isBallDrained()) {
       this.onBallDrained()
     }
   }
 
   private onBallDrained(): void {
+    // Mark ball as inactive to prevent multiple drain detections
+    this.ballActive = false
+
     this.ballsRemaining--
     this.hud.updateBalls(this.ballsRemaining)
 
@@ -117,12 +121,13 @@ export default class GameScene extends Phaser.Scene {
 
     if (this.ballsRemaining > 0) {
       // Reset ball for next life
-      this.time.delayedCall(1000, () => {
+      this.time.delayedCall(1500, () => {
         this.table.resetBall()
+        this.ballActive = true // Reactivate ball
       })
     } else {
       // Game over
-      this.time.delayedCall(1000, () => {
+      this.time.delayedCall(1500, () => {
         this.gameOver()
       })
     }
