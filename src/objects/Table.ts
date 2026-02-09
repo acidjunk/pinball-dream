@@ -91,48 +91,40 @@ export default class Table {
     this.walls.push(topWall)
     graphics.strokeRect(0, 0, WIDTH, wallThickness)
 
-    // Curved corners (top left and right) for ball deflection
-    const cornerRadius = 80
-    const cornerOffset = 40
+    // Pinball-style curved rollover lanes at top
+    const curveStartY = 150
+    const curveRadius = 120
 
-    // Top-left curved corner
-    const topLeftCorner = this.scene.matter.add.circle(
-      wallThickness + cornerOffset,
-      wallThickness + cornerOffset,
-      cornerRadius,
+    // Left curved rollover lane
+    const leftCurve = this.scene.matter.add.circle(
+      wallThickness + 80,
+      curveStartY,
+      curveRadius,
       {
         isStatic: true,
         restitution: PHYSICS.WALL.RESTITUTION,
         friction: PHYSICS.WALL.FRICTION,
       }
     )
-    this.walls.push(topLeftCorner)
+    this.walls.push(leftCurve)
 
-    // Top-right curved corner
-    const topRightCorner = this.scene.matter.add.circle(
-      WIDTH - wallThickness - cornerOffset,
-      wallThickness + cornerOffset,
-      cornerRadius,
+    // Right curved rollover lane (not in launch lane area)
+    const rightCurve = this.scene.matter.add.circle(
+      WIDTH - 240,
+      curveStartY,
+      curveRadius,
       {
         isStatic: true,
         restitution: PHYSICS.WALL.RESTITUTION,
         friction: PHYSICS.WALL.FRICTION,
       }
     )
-    this.walls.push(topRightCorner)
+    this.walls.push(rightCurve)
 
-    // Draw curved corners visually
+    // Draw curved lanes visually
     graphics.lineStyle(wallThickness, COLORS.WALL, 1)
-    graphics.strokeCircle(
-      wallThickness + cornerOffset,
-      wallThickness + cornerOffset,
-      cornerRadius
-    )
-    graphics.strokeCircle(
-      WIDTH - wallThickness - cornerOffset,
-      wallThickness + cornerOffset,
-      cornerRadius
-    )
+    graphics.strokeCircle(wallThickness + 80, curveStartY, curveRadius)
+    graphics.strokeCircle(WIDTH - 240, curveStartY, curveRadius)
 
     // Launch lane separator (right side)
     const launchSeparator = this.scene.matter.add.rectangle(
@@ -148,6 +140,36 @@ export default class Table {
     )
     this.walls.push(launchSeparator)
     graphics.strokeRect(WIDTH - 130, HEIGHT - 700, 20, 600)
+
+    // Launch bucket (bottom of launch lane to catch ball)
+    const bucketBottom = this.scene.matter.add.rectangle(
+      WIDTH - 60,
+      HEIGHT - 80,
+      100,
+      20,
+      {
+        isStatic: true,
+        restitution: 0.2, // Low restitution so ball settles
+        friction: 0.5,
+      }
+    )
+    this.walls.push(bucketBottom)
+    graphics.strokeRect(WIDTH - 110, HEIGHT - 90, 100, 20)
+
+    // Launch bucket left wall (keeps ball in place)
+    const bucketWall = this.scene.matter.add.rectangle(
+      WIDTH - 130,
+      HEIGHT - 150,
+      20,
+      120,
+      {
+        isStatic: true,
+        restitution: PHYSICS.WALL.RESTITUTION,
+        friction: PHYSICS.WALL.FRICTION,
+      }
+    )
+    this.walls.push(bucketWall)
+    graphics.strokeRect(WIDTH - 140, HEIGHT - 210, 20, 120)
 
     // Bottom guides (angled walls that funnel ball to flippers)
     const bottomY = HEIGHT - 180
@@ -184,17 +206,18 @@ export default class Table {
   private createFlippers(): void {
     const { WIDTH, HEIGHT } = GAME
     const flipperY = HEIGHT - 120
+    const gap = 60 // Gap between flippers
 
     this.leftFlipper = new Flipper(
       this.scene,
-      WIDTH / 2 - 100,
+      WIDTH / 2 - gap,
       flipperY,
       'left'
     )
 
     this.rightFlipper = new Flipper(
       this.scene,
-      WIDTH / 2 + 100,
+      WIDTH / 2 + gap,
       flipperY,
       'right'
     )
@@ -250,8 +273,8 @@ export default class Table {
 
   private createBall(): void {
     const { WIDTH, HEIGHT } = GAME
-    // Start ball in launch position (right side)
-    this.ball = new Ball(this.scene, WIDTH - 80, HEIGHT - 300)
+    // Start ball in launch bucket at bottom
+    this.ball = new Ball(this.scene, WIDTH - 60, HEIGHT - 120)
   }
 
   private createPlunger(): void {
@@ -290,7 +313,8 @@ export default class Table {
 
   resetBall(): void {
     const { WIDTH, HEIGHT } = GAME
-    this.ball.reset(WIDTH - 80, HEIGHT - 300)
+    // Reset ball to launch bucket
+    this.ball.reset(WIDTH - 60, HEIGHT - 120)
   }
 
   update(): void {
